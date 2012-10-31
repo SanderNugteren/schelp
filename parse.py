@@ -1,53 +1,5 @@
 #!/usr/bin/env python2
-#from pyparsing import Forward, nestedExpr, Word, alphanums
-
-
-from pyparsing import *
-from base64 import b64decode
-import pprint
-
-def verifyLen(s,l,t):
-    t = t[0]
-    if t.len is not None:
-        t1len = len(t[1])
-        if t1len != t.len:
-            raise ParseFatalException(s,l,\
-                    "invalid data of length %d, expected %s" % (t1len, t.len))
-    return t[1]
-
-# define punctuation literals
-LPAR, RPAR, LBRK, RBRK, LBRC, RBRC, VBAR = map(Suppress, "()[]{}|")
-
-decimal = Regex(r'0|[1-9]\d*').setParseAction(lambda t: int(t[0]))
-hexadecimal = ("#" + OneOrMore(Word(hexnums)) + "#")\
-                .setParseAction(lambda t: int("".join(t[1:-1]),16))
-bytes = Word(printables)
-raw = Group(decimal("len") + Suppress(":") + bytes).setParseAction(verifyLen)
-token = Word(alphanums + "-./_:*+=")
-base64_ = Group(Optional(decimal|hexadecimal,default=None)("len") + VBAR 
-    + OneOrMore(Word( alphanums +"+/=" )).setParseAction(lambda t: b64decode("".join(t)))
-    + VBAR).setParseAction(verifyLen)
-    
-qString = Group(Optional(decimal,default=None)("len") + 
-                        dblQuotedString.setParseAction(removeQuotes)).setParseAction(verifyLen)
-simpleString = base64_ | raw | decimal | token | hexadecimal | qString
-
-# extended definitions
-decimal = Regex(r'-?0|[1-9]\d*').setParseAction(lambda t: int(t[0]))
-real = Regex(r"[+-]?\d+\.\d*([eE][+-]?\d+)?").setParseAction(lambda tokens: float(tokens[0]))
-token = Word(alphanums + "-./_:;*+=!<>@&`',?%#$\\")
-
-simpleString = real | base64_ | raw | decimal | token | hexadecimal | qString
-
-
-
-
-
-
-
-
-
-
+from pyparsing import Forward, nestedExpr, Word, alphanums
 
 characters = alphanums + "_:;~/<>@',.`$%+-&!?\"i#=*\\"
 
