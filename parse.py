@@ -15,15 +15,14 @@ def get_p(t, f):
 
 
 def traverse(o):
-    if not isinstance(o, basestring):
-        if isinstance(o[1], basestring):
-            yield (o[0], o[1])
-        else:
-            if len(o) > 2:
-                yield (o[0], o[1][0], o[2][0])
-            for value in o:
-                for subvalue in traverse(value):
-                    yield subvalue
+    if isinstance(o[1], basestring):
+        yield (o[0], o[1])
+    else:
+        if len(o) > 2:
+            yield (o[0], o[1][0], o[2][0])
+        for value in o[1:]:
+            for subvalue in traverse(value):
+                yield subvalue
 
 
 def main():
