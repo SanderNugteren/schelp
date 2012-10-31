@@ -1,11 +1,6 @@
 #!/usr/bin/env python2
 from pyparsing import Forward, nestedExpr, Word, alphanums
-
-characters = alphanums + "_:;~/<>@',.`$%+-&!?\"i#=*\\"
-
-enclosed = Forward()
-nestedParens = nestedExpr('(', ')', content=enclosed)
-enclosed << (Word(characters) | nestedParens)
+import tree_parser
 
 
 def get_p(t, f):
@@ -16,9 +11,9 @@ def get_p(t, f):
 
 def traverse(o):
     if isinstance(o[1], basestring):
-        yield (o[0], o[1])
+        yield (o[0], o[1])  # Terminal
     else:
-        if len(o) > 2:
+        if len(o) > 2:      # Non-terminal
             yield (o[0], o[1][0], o[2][0])
         for value in o[1:]:
             for subvalue in traverse(value):
@@ -29,15 +24,8 @@ def main():
     f = open('data/train_trees')
     frequencies = dict()
     for i, line in enumerate(f):
-        if i > 99:
-            break
-        try:
-            l = enclosed.parseString(line).asList()
-            print i
-        except:
-            print 'X\t'+str(i)
-            continue
-        for t in traverse(l[0][1]): # skip TOP
+        l = tree_parser.get_tree(line)  # charity from Patrick de Kok
+        for t in traverse(l[1]): # skip TOP
             if t[0] in frequencies:
                 if t[1:] in frequencies[t[0]]:
                     frequencies[t[0]][t[1:]] += 1
