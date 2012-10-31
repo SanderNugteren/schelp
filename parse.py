@@ -1,14 +1,59 @@
 #!/usr/bin/env python2
-from pyparsing import Forward, nestedExpr, Word, alphanums
+#from pyparsing import Forward, nestedExpr, Word, alphanums
 
-sample = "(TOP (S (NP (DT A) (NP@ (NN record) (NN date))) (S@ (VP (VBZ has) (VP@ (RB n't) (VP (VBN been) (VP (VBN set))))) (. .))) )"
 
-characters = alphanums + '@' + "'" + "," + "." + '`' + '$' + '%' + '-' + '&'
+from pyparsing import *
+from base64 import b64decode
+import pprint
+
+def verifyLen(s,l,t):
+    t = t[0]
+    if t.len is not None:
+        t1len = len(t[1])
+        if t1len != t.len:
+            raise ParseFatalException(s,l,\
+                    "invalid data of length %d, expected %s" % (t1len, t.len))
+    return t[1]
+
+# define punctuation literals
+LPAR, RPAR, LBRK, RBRK, LBRC, RBRC, VBAR = map(Suppress, "()[]{}|")
+
+decimal = Regex(r'0|[1-9]\d*').setParseAction(lambda t: int(t[0]))
+hexadecimal = ("#" + OneOrMore(Word(hexnums)) + "#")\
+                .setParseAction(lambda t: int("".join(t[1:-1]),16))
+bytes = Word(printables)
+raw = Group(decimal("len") + Suppress(":") + bytes).setParseAction(verifyLen)
+token = Word(alphanums + "-./_:*+=")
+base64_ = Group(Optional(decimal|hexadecimal,default=None)("len") + VBAR 
+    + OneOrMore(Word( alphanums +"+/=" )).setParseAction(lambda t: b64decode("".join(t)))
+    + VBAR).setParseAction(verifyLen)
+    
+qString = Group(Optional(decimal,default=None)("len") + 
+                        dblQuotedString.setParseAction(removeQuotes)).setParseAction(verifyLen)
+simpleString = base64_ | raw | decimal | token | hexadecimal | qString
+
+# extended definitions
+decimal = Regex(r'-?0|[1-9]\d*').setParseAction(lambda t: int(t[0]))
+real = Regex(r"[+-]?\d+\.\d*([eE][+-]?\d+)?").setParseAction(lambda tokens: float(tokens[0]))
+token = Word(alphanums + "-./_:;*+=!<>@&`',?%#$\\")
+
+simpleString = real | base64_ | raw | decimal | token | hexadecimal | qString
+
+
+
+
+
+
+
+
+
+
+
+characters = alphanums + "_:;~/<>@',.`$%+-&!?\"i#=*\\"
 
 enclosed = Forward()
 nestedParens = nestedExpr('(', ')', content=enclosed)
 enclosed << (Word(characters) | nestedParens)
-
 
 
 def get_p(t, f):
@@ -18,8 +63,8 @@ def get_p(t, f):
 
 
 def traverse(o):
-    if isinstance(o, list):
-        if isinstance(o[1], str):
+    if not isinstance(o, basestring):
+        if isinstance(o[1], basestring):
             yield (o[0], o[1])
         else:
             if len(o) > 2:
@@ -29,16 +74,19 @@ def traverse(o):
                     yield subvalue
 
 
-
-#print get_p(('S', 'NP', 'S@'), frequencies)
-
 def main():
     f = open('data/train_trees')
     frequencies = dict()
-    for line in f:
-        l = enclosed.parseString(line).asList()
+    for i, line in enumerate(f):
+        if i > 99:
+            break
+        try:
+            l = enclosed.parseString(line).asList()
+            print i
+        except:
+            print 'X\t'+str(i)
+            continue
         for t in traverse(l[0][1]): # skip TOP
-            print t
             if t[0] in frequencies:
                 if t[1:] in frequencies[t[0]]:
                     frequencies[t[0]][t[1:]] += 1
