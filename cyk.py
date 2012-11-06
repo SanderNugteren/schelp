@@ -22,7 +22,7 @@ def main():
                 pass
         sys.exit(0)
 
-def table_traverse(table_length)
+def table_traverse(table_length):
         for i in xrange(table_length):
             for j in xrange(table_length - i):
                 yield j, i+j
