@@ -2,8 +2,20 @@ import sys
 from itertools import combinations
 from freqs import frequencies, r_rules
 
-def main():
-    f = open('data/test_sentence')
+def main(filename):
+    f = open(filename)
+    for table in cyk(f):
+        print(viterbi(table))
+
+def viterbi(table):
+    l = len(table)
+    print(table)
+    sys.exit(0)
+    top = table[l-2][0]
+    print(top)
+
+
+def cyk(f):
     for line in f:
         words = line.strip().split(" ")
         table = [[set()] * i for i in xrange(1, len(words) + 1)] # CYK table
@@ -25,9 +37,9 @@ def main():
                 for l in left:
                     for d in down:
                         if (l, d) in r_rules:
-                            table[j][i] |= set(r_rules[(l, d)])
-        print table
-        sys.exit(0)
+                            for parent in r_rules[(l, d)]:
+                                table[j][i].add((parent, l, d))
+        yield table
 
 def table_traverse(table_length):
         for i in xrange(table_length):
@@ -35,4 +47,4 @@ def table_traverse(table_length):
                 yield j, i+j
 
 if __name__ == '__main__':
-    main()
+    main('data/test_sentence')
