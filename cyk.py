@@ -1,18 +1,21 @@
 import sys
 from itertools import combinations
 from freqs import frequencies, r_rules
+from parse import get_logp
+from pprint import pprint
 
 def main(filename):
     f = open(filename)
     for table in cyk(f):
         print(viterbi(table))
 
-def viterbi(table):
+
+def viterbi(table, i, j, parent):
     l = len(table)
-    print(table)
-    sys.exit(0)
-    top = table[l-2][0]
-    print(top)
+    if j >= l or i < 0:
+        return table[...]
+    else:
+        return viterbi(table, i-1, j, left) + viterbi(table, i, j+1, right)
 
 
 def cyk(f):
@@ -38,13 +41,17 @@ def cyk(f):
                     for d in down:
                         if (l, d) in r_rules:
                             for parent in r_rules[(l, d)]:
-                                table[j][i].add((parent, l, d))
+                                p = get_logp((parent, l, d), frequencies)
+                                table[j][i].add((parent, l, d, p))
+        pprint(table)
         yield table
+
 
 def table_traverse(table_length):
         for i in xrange(table_length):
             for j in xrange(table_length - i):
                 yield j, i+j
+
 
 if __name__ == '__main__':
     main('data/test_sentence')

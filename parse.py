@@ -1,12 +1,16 @@
 #!/usr/bin/env python2
 from pyparsing import Forward, nestedExpr, Word, alphanums
 import tree_parser
+from math import log
 
 
 def get_p(t, f):
     if t[0] in f:
         return f[t[0]][t[1:]] / float(sum(f[t[0]].values()))
     return 0.0
+
+def get_logp(t, f):
+    return log(get_p(t, f))
 
 
 def traverse(o):
