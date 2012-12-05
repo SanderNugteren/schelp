@@ -7,6 +7,8 @@ from pprint import pprint
 def main(filename):
     f = open(filename)
     for table in cyk(f):
+        pprint(table)
+        sys.exit(0)
         print(viterbi(table))
 
 
@@ -35,15 +37,16 @@ def cyk(f):
                                 new_keys |= key
                                 keys_added = True
             else:   # Binary rules
-                left = set(table[j-1][i])
-                down = set(table[j][i+1])
-                for l in left:
-                    for d in down:
-                        if (l, d) in r_rules:
-                            for parent in r_rules[(l, d)]:
-                                p = get_logp((parent, l, d), frequencies)
-                                table[j][i].add((parent, l, d, p))
-        pprint(table)
+                for ll in range(i, j):
+                    dd = ll + 1
+                    left = set(table[j][dd])
+                    down = set(table[ll][i])
+                    for l in left:
+                        for d in down:
+                            if (l, d) in r_rules:
+                                for parent in r_rules[(l, d)]:
+                                    p = get_logp((parent, l, d), frequencies)
+                                    table[j][i].add((parent, l, d, p))
         yield table
 
 
