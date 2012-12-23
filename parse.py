@@ -19,6 +19,8 @@ def traverse(o):
     else:
         if len(o) > 2:      # Non-terminal
             yield (o[0], o[1][0], o[2][0])
+        else:
+            yield (o[0], o[1][0])
         for value in o[1:]:
             for subvalue in traverse(value):
                 yield subvalue

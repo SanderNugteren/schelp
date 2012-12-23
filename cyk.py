@@ -34,13 +34,15 @@ def cyk(f):
                     keys_added = False
                     for rule in table[i][j]:
                         if (rule,) in r_rules:
-                            print r_rules[(rule,)]
+                            print rule + "->" + str(r_rules[(rule,)])
                             for key in r_rules[(rule,)]:
                                 if key not in new_keys:
                                     new_keys |= set(key)
                                     print "new_keys", new_keys
                                     keys_added = True
                                     raw_input()
+                        else:
+                            print "not " + rule
             else:   # Binary rules
                 for ll in range(i, j):
                     dd = ll + 1
