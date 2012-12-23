@@ -26,16 +26,21 @@ def cyk(f):
         table = [[set()] * i for i in xrange(1, len(words) + 1)] # CYK table
         for i, j in table_traverse(len(words)):
             if i == j:  # Unary rules
+                print i
                 table[i][j] = set(r_rules[(words[i],)]) # Add terminal rules
                 new_keys = set()
                 keys_added = True
-                while keys_added: # Add nonterminal unary rules
+                while keys_added: # Add nonterminal unary rules, FIXME broken
                     keys_added = False
                     for rule in table[i][j]:
-                        if rule in r_rules:
-                            for key in r_rules[rule]:
-                                new_keys |= key
-                                keys_added = True
+                        if (rule,) in r_rules:
+                            print r_rules[(rule,)]
+                            for key in r_rules[(rule,)]:
+                                if key not in new_keys:
+                                    new_keys |= set(key)
+                                    print "new_keys", new_keys
+                                    keys_added = True
+                                    raw_input()
             else:   # Binary rules
                 for ll in range(i, j):
                     dd = ll + 1
@@ -57,4 +62,4 @@ def table_traverse(table_length):
 
 
 if __name__ == '__main__':
-    main('data/test_sentence')
+    main('data/one_sentence')
