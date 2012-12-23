@@ -26,7 +26,6 @@ def cyk(f):
         table = [[set()] * i for i in xrange(1, len(words) + 1)] # CYK table
         for i, j in table_traverse(len(words)):
             if i == j:  # Unary rules
-                print i
                 table[i][j] = set(r_rules[(words[i],)]) # Add terminal rules
                 new_keys = set()
                 keys_added = True
@@ -34,33 +33,31 @@ def cyk(f):
                     keys_added = False
                     for rule in table[i][j]:
                         if (rule,) in r_rules:
-                            print rule + "->" + str(r_rules[(rule,)])
                             for key in r_rules[(rule,)]:
                                 if key not in new_keys:
-                                    new_keys |= set(key)
-                                    print "new_keys", new_keys
+                                    new_keys |= set([key])
                                     keys_added = True
-                                    raw_input()
-                        else:
-                            print "not " + rule
+                table[i][j] |=  new_keys
             else:   # Binary rules
                 for ll in range(i, j):
                     dd = ll + 1
-                    left = set(table[j][dd])
-                    down = set(table[ll][i])
+                    down = set(table[j][dd])
+                    left = set(table[ll][i])
                     for l in left:
                         for d in down:
+                            #print 'ld: ' + str((l, d))
                             if (l, d) in r_rules:
                                 for parent in r_rules[(l, d)]:
+                                    print parent + '->' + str(l) + ' ' + str(d)
                                     p = get_logp((parent, l, d), frequencies)
                                     table[j][i].add((parent, l, d, p))
         yield table
 
 
 def table_traverse(table_length):
-        for i in xrange(table_length):
-            for j in xrange(table_length - i):
-                yield j, i+j
+    for i in xrange(table_length):
+        for j in xrange(table_length - i):
+            yield j, i+j
 
 
 if __name__ == '__main__':
