@@ -16,7 +16,7 @@ def main(filename):
 def viterbi(table, i, j, parent):
     l = len(table)
     if j >= l or i < 0:
-        return table[...] # Not real code yet
+        return table[i][j]... # Not real code yet
     else:
         return viterbi(table, i-1, j, left) + viterbi(table, i, j+1, right)
 

@@ -5,9 +5,11 @@ from math import log
 
 
 def get_p(t, f):
+    ft = f[t[0]]
     if t[0] in f:
-        return f[t[0]][t[1:]] / float(sum(f[t[0]].values()))
-    return 0.0
+        return ft[t[1:]] / float(sum(ft.values()))
+    else:
+        return 0.0
 
 def get_logp(t, f):
     return log(get_p(t, f))
