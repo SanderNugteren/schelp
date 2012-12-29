@@ -3,11 +3,12 @@ from itertools import combinations
 from freqs import frequencies, r_rules
 from parse import get_logp
 from pprint import pprint
+from math import log
 
 def main(filename):
     f = open(filename)
     for table in cyk(f):
-        #pprint(table)
+        pprint(table)
         sys.exit(0)
         print(viterbi(table))
 
@@ -15,7 +16,7 @@ def main(filename):
 def viterbi(table, i, j, parent):
     l = len(table)
     if j >= l or i < 0:
-        return table[...]
+        return table[...] # Not real code yet
     else:
         return viterbi(table, i-1, j, left) + viterbi(table, i, j+1, right)
 
@@ -26,15 +27,17 @@ def cyk(f):
         table = [[set()] * i for i in xrange(1, len(words) + 1)] # CYK table
         for i, j in table_traverse(len(words)):
             if i == j:  # Unary rules
+                print 'unary'
                 terminals = r_rules[(words[i],)]
-                if len(terminals) == 1:
-                    table[i][j] = (terminals[0], 0) # FIXME log of p(1)
-                else:
-                    total = 0
+                if len(terminals) == 1: # log p(rule|terminal) = 0
+                    table[i][j] |= set([(terminals[0], 0)])
+                else: # log p(rule|terminal)
+                    total = 0.0
                     for t in terminals:
-                        get_p((word[i], t) # fix probs
-                print words[i], table[i][j]
-                print
+                        total += frequencies[t][(words[i],)]
+                    for t in terminals:
+                        table[i][j] |= set([(t,
+                            log(frequencies[t][(words[i],)]/total))])
                 new_keys = set()
                 keys_added = True
                 while keys_added: # Add nonterminal unary rules
@@ -47,6 +50,7 @@ def cyk(f):
                                     keys_added = True
                 table[i][j] |=  new_keys
             else:   # Binary rules
+                print 'binary'
                 for ll in range(i, j):
                     dd = ll + 1
                     down = set(table[j][dd])
@@ -54,11 +58,11 @@ def cyk(f):
                     for l in left:
                         for d in down:
                             #print 'ld: ' + str((l, d))
-                            if (l, d) in r_rules:
-                                for parent in r_rules[(l, d)]:
-                                    #print parent + '->' + str(l) + ' ' + str(d)
-                                    p = get_logp((parent, l, d), frequencies)
-                                    table[j][i].add((parent, l, d, p))
+                            if (l[0], d[0]) in r_rules:
+                                for parent in r_rules[(l[0], d[0])]:
+                                    #print parent + '->' + str(l[0]) + ' ' + str(d[0])
+                                    p = get_logp((parent, l[0], d[0]), frequencies)
+                                    table[j][i].add((parent, l[0], d[0], p))
         yield table
 
 
