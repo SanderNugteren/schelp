@@ -4,6 +4,7 @@ from freqs import frequencies, r_rules
 from parse import get_logp
 from pprint import pprint
 from math import log
+import cProfile
 
 def main(filename):
     f = open(filename)
@@ -52,17 +53,32 @@ def cyk(f):
             else:   # Binary rules
                 print 'binary'
                 for ll in range(i, j):
-                    dd = ll + 1
-                    down = set(table[j][dd])
+                    #dd = ll + 1
+                    #down = set(table[j][dd])
+                    down = set(table[j][ll+1])
                     left = set(table[ll][i])
+                    addRule = True
                     for l in left:
                         for d in down:
                             #print 'ld: ' + str((l, d))
                             if (l[0], d[0]) in r_rules:
                                 for parent in r_rules[(l[0], d[0])]:
                                     #print parent + '->' + str(l[0]) + ' ' + str(d[0])
-                                    p = get_logp((parent, l[0], d[0]), frequencies)
-                                    table[j][i].add((parent, l[0], d[0], p))
+                                    rule = (parent, l[0], d[0])
+                                    p = get_logp(rule , frequencies) + l[-1] + d[-1]
+                                    #new code
+                                    #check if there already is an entry for this rule
+                                    addRule = True
+                                    for t in table[j][i]:
+                                        if t[:-1] == rule:
+                                            if t[-1] < p:
+                                                #and if so, if it is higher
+                                                table[j][i].remove(t)
+                                            else:
+                                                addRule = False
+                                            break
+                                    if addRule:
+                                        table[j][i].add((parent, l[0], d[0], p))
         yield table
 
 
@@ -73,4 +89,4 @@ def table_traverse(table_length):
 
 
 if __name__ == '__main__':
-    main('data/one_sentence')
+    cProfile.run("main('data/one_sentence')")
