@@ -10,16 +10,6 @@ def main(filename):
     f = open(filename)
     for table in cyk(f):
         pprint(table)
-        sys.exit(0)
-        print(viterbi(table))
-
-
-def viterbi(table, i, j, parent):
-    l = len(table)
-    if j >= l or i < 0:
-        return table[i][j]... # Not real code yet
-    else:
-        return viterbi(table, i-1, j, left) + viterbi(table, i, j+1, right)
 
 
 def cyk(f):
