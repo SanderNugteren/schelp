@@ -24,19 +24,23 @@ def main(filename):
 def cyk(f):
     for line in f:
         words = line.strip().split(" ")
-        table = [[{}] * i for i in xrange(1, len(words) + 1)] # CYK table
+        table = []
+        for i in xrange(1, len(words) + 1):
+            row = []
+            for j in xrange(i):
+                row.append({})
+            table.append(row)
         for i, j in table_traverse(len(words)):
-            print i,j
             if i == j:  # Unary rules
                 terminals = r_rules[(words[i],)]
                 if len(terminals) == 1: # log p(rule|terminal) = 0
-                    table[i][j][terminals[0]] = (0.0, words[0])
+                    table[i][j][terminals[0]] = (0.0, words[i])
                 else: # log p(rule|terminal)
                     total = 0.0
                     for t in terminals:
                         total += frequencies[t][(words[i],)]
                     for t in terminals:
-                        table[i][j][t] = (log(frequencies[t][(words[i],)]/total), words[0])
+                        table[i][j][t] = (log(frequencies[t][(words[i],)]/total), words[i])
                 new_rules = set()
                 new_keys = set()
                 keys_added = True
@@ -61,7 +65,6 @@ def cyk(f):
                     for l in left.keys():
                         for d in down.keys():
                             if (l, d) in r_rules:
-                                print l,d
                                 pl = left[l][0]
                                 pd = down[d][0]
                                 for parent in r_rules[(l, d)]:
@@ -71,27 +74,9 @@ def cyk(f):
                                     #check if there already is an entry for this rule
                                     if parent in table[j][i]:
                                         if table[j][i][parent][0] < p:
-                                            #print parent
-                                            #print l + '->' + str(left[l][1:])
-                                            #print d + '->' + str(down[d][1:])
-                                            #table[j][i][parent] = (p, ((l, left[l][-1]), (d, down[d][-1])))
-                                            pass
-                                            #pprint(table[j][i][parent])
-                                            #print
-                                            #print
+                                            table[j][i][parent] = (p, ((l, left[l][-1]), (d, down[d][-1])))
                                     else:
-                                        print "WRITINGWRITINGWRITINGWRITINGWRITINGWRITINGWRITING"
-                                        print j,i,parent
                                         table[j][i][parent] = (p, ((l, left[l][-1]), (d, down[d][-1])))
-                                        print table[1][1]
-                                        raw_input()
-                                    #pprint(table[j][i][parent])
-                    print (i,j),(j,ll+1),(ll,i)
-                    print table[1][1]
-                    sys.exit(0)
-                print 'HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHAAAAAAAAAAAAAAAAAAAAAAAAAG'
-                print table[1][1]
-                sys.exit(0)
         yield table
 
 
