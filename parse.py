@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
-from pyparsing import Forward, nestedExpr, Word, alphanums
-import tree_parser
+#from pyparsing import Forward, nestedExpr, Word, alphanums
+#import tree_parser
 from math import log
 
 
