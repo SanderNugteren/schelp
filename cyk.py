@@ -80,11 +80,15 @@ def cyk(f):
                                                     dt = (dt[0], dt[1][0], dt[1][1])
                                                 else:
                                                     dt = (dt[0], dt[1][0])
+                                            else:
+                                                dt = (dt[0], dt[1][0])
                                             if type(lt[1]) == tuple and type(lt[1][0]) == tuple:
                                                 if len(lt[1]) == 2:
                                                     lt = (lt[0], lt[1][0], lt[1][1])
                                                 else:
                                                     lt = (lt[0], lt[1][0])
+                                            else:
+                                                lt = (lt[0], lt[1][0])
                                             table[j][i][parent] = (p, lt, dt)
                                     else:
                                         lt = (l, left[l][1:])
@@ -94,11 +98,15 @@ def cyk(f):
                                                 dt = (dt[0], dt[1][0], dt[1][1])
                                             else:
                                                 dt = (dt[0], dt[1][0])
+                                        else:
+                                            dt = (dt[0], dt[1][0])
                                         if type(lt[1]) == tuple and type(lt[1][0]) == tuple:
                                             if len(lt[1]) == 2:
                                                 lt = (lt[0], lt[1][0], lt[1][1])
                                             else:
                                                 lt = (lt[0], lt[1][0])
+                                        else:
+                                            lt = (lt[0], lt[1][0])
                                         table[j][i][parent] = (p, lt, dt)
         yield table
 
