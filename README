@@ -1,0 +1,8 @@
+To create a language model, use parse.py to generate a dictionary of the form:
+frequencies[PARENT][CHILDREN] = FREQUENCY
+We also created parse_reverse.py to create a dictionary of the form:
+r_rules[CHILDREN][PARENT] = FREQUENCY
+Both are stored in freqs.py with these names.
+These models are used in cyk.py, which has the cyk function which parses a sentence.
+cyk_eval.py uses this to parse the test sentences and evaluate the performance of the cyk algorithm.
+To run our code execute this file ('python cyk_eval.py')
