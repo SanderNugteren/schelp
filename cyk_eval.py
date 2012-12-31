@@ -1,4 +1,6 @@
 import cyk
+from parse import traverse
+import tree_parser
 import sys
 
 def evaluate():
@@ -7,25 +9,28 @@ def evaluate():
     correct = 0
     incorrect = 0
     for table in cyk.cyk(sentenceFile):
-        print ('TOP', ('S', table[-1][0]['S'][1]))
-        cykTree = tree_to_string(('TOP', ('S', table[-1][0]['S'][1])))
+        cykTree = ('TOP', ('S', table[-1][0]['S'][1]))
         print cykTree
         print
-        realTree = treeFile.readline()
+        realTree = tree_parser.get_tree(treeFile.readline())
         print realTree
-        sys.exit(0)
-        if cykTree == testTree:
+        #TODO use traverse here
+        match = True
+        r_traverse = traverse(realTree)
+        for c in traverse(cykTree):
+            r = r_traverse.next()
+            print str(c) + ' a match for ' + str(r)
+            if c != r:
+                print 'no match'
+                match = False
+                break
+        if match:
             correct += 1
         else:
             incorrect += 1
+        sys.exit(0)
     print 'correct: ' + str(correct)
     print 'incorrect: ' + str(incorrect)
-
-def tree_to_string(tree):
-    tree_str = '(' + str(tree[0])
-    for child in tree[1:]:
-        tree_str += ' ' + tree_to_string(child)
-    return tree_str + ' )'
 
 if __name__ == '__main__':
     evaluate()
