@@ -1,3 +1,4 @@
+# vim: set nowrap:
 import sys
 from itertools import combinations
 from freqs import frequencies, r_rules
@@ -10,16 +11,10 @@ def main(filename):
     f = open(filename)
     for table in cyk(f):
         #pprint(table)
-        print ('S', table[-1][0]['S'][1])
-        #print 'should be Ms.'
-        #pprint(table[0][0])
-        #print 'should be Haag'
-        #pprint(table[1][1])
-        #print 'NP'
-        #pprint(table[1][0]['NP'])
-        #print 'S@'
-        #pprint(table[-1][2]['S@'])
-
+        try:
+            print ('S', table[-1][0]['S'][1], table[-1][0]['S'][2])
+        except KeyError as e:
+            print ()
 
 def cyk(f):
     for line in f:
@@ -78,9 +73,34 @@ def cyk(f):
                                     #check if there already is an entry for this rule
                                     if parent in table[j][i]:
                                         if table[j][i][parent][0] < p:
-                                            table[j][i][parent] = (p, ((l, left[l][-1]), (d, down[d][-1])))
+                                            lt = (l, left[l][1:])
+                                            dt = (d, down[d][1:])
+                                            if type(dt[1]) == tuple and type(dt[1][0]) == tuple:
+                                                if len(dt[1]) == 2:
+                                                    dt = (dt[0], dt[1][0], dt[1][1])
+                                                else:
+                                                    dt = (dt[0], dt[1][0])
+                                            if type(lt[1]) == tuple and type(lt[1][0]) == tuple:
+                                                if len(lt[1]) == 2:
+                                                    lt = (lt[0], lt[1][0], lt[1][1])
+                                                else:
+                                                    lt = (lt[0], lt[1][0])
+                                            table[j][i][parent] = (p, lt, dt)
                                     else:
-                                        table[j][i][parent] = (p, ((l, left[l][-1]), (d, down[d][-1])))
+                                        lt = (l, left[l][1:])
+                                        dt = (d, down[d][1:])
+                                        if type(dt[1]) == tuple and type(dt[1][0]) == tuple:
+                                            if len(dt[1]) == 2:
+                                                dt = (dt[0], dt[1][0], dt[1][1])
+                                            else:
+                                                dt = (dt[0], dt[1][0])
+                                        if type(lt[1]) == tuple and type(lt[1][0]) == tuple:
+                                            if len(lt[1]) == 2:
+                                                lt = (lt[0], lt[1][0], lt[1][1])
+                                            else:
+                                                lt = (lt[0], lt[1][0])
+                                        table[j][i][parent] = (p, lt, dt)
+                                        table[j][i][parent] = (p, (l, lt), (d, dt))
         yield table
 
 
