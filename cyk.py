@@ -55,7 +55,11 @@ def cyk(f):
                                     new_rules.add((key, rule))
                                     keys_added = True
                 for key, rule in new_rules:
-                    table[i][j][key] = (-1, (rule, words[i])) # FIXME real prob
+                    lp = get_logp((key, rule), frequencies)
+                    if key in table[i][j]: # do not add recursive rules with
+                        if table[i][j][key][0] > lp:
+                            continue
+                    table[i][j][key] = (lp, (rule, words[i]))
             else:   # Binary rules
                 for ll in range(i, j):
                     #dd = ll + 1
