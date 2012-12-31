@@ -28,7 +28,6 @@ def evaluate():
             correct += 1
         else:
             incorrect += 1
-        sys.exit(0)
     print 'correct: ' + str(correct)
     print 'incorrect: ' + str(incorrect)
 
