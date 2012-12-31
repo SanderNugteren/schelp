@@ -9,7 +9,7 @@ def evaluate():
     correct = 0
     incorrect = 0
     for table in cyk.cyk(sentenceFile):
-        cykTree = ('TOP', ('S', table[-1][0]['S'][1]))
+        cykTree = ('TOP', ('S', table[-1][0]['S'][1], table[-1][0]['S'][2]))
         print cykTree
         print
         realTree = tree_parser.get_tree(treeFile.readline())

@@ -100,7 +100,6 @@ def cyk(f):
                                             else:
                                                 lt = (lt[0], lt[1][0])
                                         table[j][i][parent] = (p, lt, dt)
-                                        table[j][i][parent] = (p, (l, lt), (d, dt))
         yield table
 
 
@@ -114,5 +113,5 @@ if __name__ == '__main__':
     if False:
         cProfile.run("main('data/one_sentence')")
     else:
-        main('data/one_sentence')
+        main('data/test_sentence')
 
