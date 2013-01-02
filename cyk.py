@@ -73,7 +73,10 @@ def cyk(f):
                                                 table[j][i][parent] = (p, lt, dt)
         except KeyError:
             pass
-        yield ('TOP', ('S', table[-1][0]['S'][1], table[-1][0]['S'][2]))
+        try:
+            yield ('TOP', ('S', table[-1][0]['S'][1], table[-1][0]['S'][2]))
+        except KeyError:
+            yield ()
 
 def tree(node, subtree):
     tree = (node, subtree[node][1:])

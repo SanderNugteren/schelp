@@ -21,8 +21,10 @@ def evaluate():
                 break
         if match:
             correct += 1
+            print 1
         else:
             incorrect += 1
+            print 0
     print 'correct: ' + str(correct)
     print 'incorrect: ' + str(incorrect)
 
