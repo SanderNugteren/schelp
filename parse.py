@@ -16,16 +16,19 @@ def get_logp(t, f):
 
 
 def traverse(o):
-    if isinstance(o[1], basestring):
-        yield (o[0], o[1])  # Terminal
-    else:
-        if len(o) > 2:      # Non-terminal
-            yield (o[0], o[1][0], o[2][0])
+    try:
+        if isinstance(o[1], basestring):
+            yield (o[0], o[1])  # Terminal
         else:
-            yield (o[0], o[1][0])
-        for value in o[1:]:
-            for subvalue in traverse(value):
-                yield subvalue
+            if len(o) > 2:      # Non-terminal
+                yield (o[0], o[1][0], o[2][0])
+            else:
+                yield (o[0], o[1][0])
+            for value in o[1:]:
+                for subvalue in traverse(value):
+                    yield subvalue
+    except IndexError:
+        yield ()
 
 
 def main():
