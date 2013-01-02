@@ -8,20 +8,15 @@ def evaluate():
     treeFile = open('data/test_trees')
     correct = 0
     incorrect = 0
-    for table in cyk.cyk(sentenceFile):
-        cykTree = ('TOP', ('S', table[-1][0]['S'][1], table[-1][0]['S'][2]))
+    for cykTree in cyk.cyk(sentenceFile):
         print cykTree
-        print
         realTree = tree_parser.get_tree(treeFile.readline())
-        print realTree
         #TODO use traverse here
         match = True
         r_traverse = traverse(realTree)
         for c in traverse(cykTree):
             r = r_traverse.next()
-            print str(c) + ' a match for ' + str(r)
-            if c != r:
-                print 'no match'
+            if len(c) != len(r):
                 match = False
                 break
         if match:
